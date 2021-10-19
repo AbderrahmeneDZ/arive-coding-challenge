@@ -10,7 +10,7 @@ import debug from "debug";
 import usersRoute from "./routes/users.route";
 import hobbiesRoute from "./routes/hobbies.route";
 
-import AppError from "./utils/app-error.utils";
+import errorMd from "./middlewares/error.md";
 
 import swaggerDoc from "../docs/swagger.doc";
 
@@ -50,13 +50,7 @@ export default async function init() {
   app.use("/api/v1/hobbies", hobbiesRoute);
   app.use("/api/v1/users", usersRoute);
 
-  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof AppError) {
-      return res.status(err.status).json({ error: true, message: err.message });
-    }
-
-    next(err);
-  });
+  app.use(errorMd);
 
   return app;
 }
