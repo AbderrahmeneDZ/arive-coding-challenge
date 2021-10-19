@@ -1,0 +1,5 @@
+{
+    "DB": {
+        "CONNECTION": "mongodb://localhost/arive-db-test"
+    }
+}

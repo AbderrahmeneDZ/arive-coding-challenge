@@ -1,0 +1,13 @@
+{
+    "HOBBIES": {
+        "PASSION-LEVEL": [
+            "Low",
+            "Medium",
+            "High",
+            "Very-High"
+        ]
+    },
+    "DB": {
+        "CONNECTION": "mongodb://localhost/arive-db-dev"
+    }
+}
