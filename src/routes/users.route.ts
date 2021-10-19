@@ -1,15 +1,19 @@
 import express from "express";
 import objectIdMd from "../middlewares/objectId.md";
 import controller from "../controllers/users.controller";
+import asyncErrorHandler from "../utils/async.utils";
 
 const router = express.Router();
 
-router.route("/").get(controller.getAll).post(controller.create);
+router
+  .route("/")
+  .get(asyncErrorHandler(controller.getAll))
+  .post(asyncErrorHandler(controller.create));
 
 router
   .route("/:id")
-  .get(objectIdMd(["id"]), controller.getById)
-  .put(objectIdMd(["id"]), controller.update)
-  .delete(objectIdMd(["id"]), controller.remove);
+  .get(objectIdMd(["id"]), asyncErrorHandler(controller.getById))
+  .put(objectIdMd(["id"]), asyncErrorHandler(controller.update))
+  .delete(objectIdMd(["id"]), asyncErrorHandler(controller.remove));
 
 export default router;
