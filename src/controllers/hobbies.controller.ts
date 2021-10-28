@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 import Hobby from "../models/hobby.model";
+import User from "../models/user.model";
 import AppError from "../utils/app-error.utils";
-import asyncErrorHandler from "../utils/async.utils";
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
   const data = await Hobby.model.find().lean();
@@ -60,6 +61,14 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
 
 const remove = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
+
+  // prevent delete if a user has current hobby in hobbies
+  const exist = await User.model.exists({
+    hobbies: new mongoose.Types.ObjectId(id),
+  });
+  if (exist) {
+    throw new AppError("At least one user is linked to the given id.", 400);
+  }
 
   const data = await Hobby.model.findByIdAndDelete(id);
 

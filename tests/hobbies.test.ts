@@ -3,6 +3,7 @@ import { Express } from "express";
 import request from "supertest";
 import mongoose from "mongoose";
 import hobbyModel from "../src/models/hobby.model";
+import userModel from "../src/models/user.model";
 import appInit from "../src/app";
 
 const path: string = "/api/v1/hobbies";
@@ -16,6 +17,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await hobbyModel.model.deleteMany({});
+  await userModel.model.deleteMany({});
 });
 
 afterAll(async () => {
@@ -190,6 +192,25 @@ describe(path, () => {
         `${path}/${new mongoose.Types.ObjectId().toString()}`
       );
       expect(response.status).toBe(404);
+    });
+
+    it("Should return 400 status if a user is linked to the given hobby id", async () => {
+      const document = await hobbyModel.model.create({
+        _id: new mongoose.Types.ObjectId(),
+        name: "swimming",
+        passionLevel: "Low",
+      });
+
+      await userModel.model.create({
+        _id: new mongoose.Types.ObjectId(),
+        name: "John Doe",
+        hobbies: [document._id],
+      });
+
+      const response = await request(server).delete(
+        `${path}/${document._id.toString()}`
+      );
+      expect(response.status).toBe(400);
     });
 
     it("Should return 200 status and data if id exist", async () => {
